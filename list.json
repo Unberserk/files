@@ -184,20 +184,12 @@
     "game": "Subway Surfers"
   },
   {
-    "gameroot": "SuperMario64/",
-    "game": "Super Mario 64"
-  },
-  {
     "gameroot": "Tetris/",
     "game": "Tetris"
   },
   {
     "gameroot": "TheImpossibleQuiz/",
     "game": "The Impossible Quiz"
-  },
-  {
-    "gameroot": "TicTacToe/",
-    "game": "Tic Tac Toe"
   },
   {
     "gameroot": "TinyFishing/",

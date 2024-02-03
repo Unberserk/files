@@ -1,319 +1,249 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>hi</title>
-  <meta charset="UTF-8">
-  <style>
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
+    <meta charset="utf-8" />
+    <title>UnberserkGames</title>
+    <link rel="stylesheet" href="design/style.css" />
+    <link rel="icon" href="https://i.ibb.co/z2DbgKW/icon.png">
 
-  body {
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    <script src="source/Board.js"></script>
+    <script src="source/Display.js"></script>
+    <script src="source/HighScores.js"></script>
+    <script src="source/Keyboard.js"></script>
+    <script src="source/Level.js"></script>
+    <script src="source/Score.js"></script>
+    <script src="source/Tetrimino.js"></script>
+    <script src="source/Tetriminos.js"></script>
+    <script src="source/Init.js"></script>
 
-  canvas {
-    border: 1px solid white;
-  }
-  </style>
+    <script src="../utils/Storage.js"></script>
+    <script src="../utils/Sounds.js"></script>
+    <script src="../utils/KeyCode.js"></script>
+    <script src="../utils/Utils.js"></script>
 </head>
+
 <body>
-<canvas width="320" height="640" id="game"></canvas>
-<script>
-// https://tetris.fandom.com/wiki/Tetris_Guideline
+    <div id="container" class="mainScreen">
+        <div class="leftSide">
+            <div class="board">
+                <div class="field"></div>
+                <div class="winker"></div>
+                <div id="ghost"></div>
+                <div id="piece"></div>
+            </div>
 
-// get a random integer between the range of [min,max]
-// @see https://stackoverflow.com/a/1527820/2124254
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
+            <div class="messages">
+                <div class="text">
+                    <h2>Tetris</h2>
+                    <p>Select the level</p>
+                </div>
 
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+                <div class="levels">
+                    choose level:<br />
+                    <div class="left" data-action="decrease"></div>
+                    <span class="leveler">1</span>
+                    <div class="right" data-action="increase"></div>
+                    <ul>
+                        <li><a href="#" data-action="start">s<u>t</u>art</a></li>
+                        <li><a href="#" data-action="highScores">h<u>i</u>gh scores</a></li>
+                        <li><a href="#" data-action="help"><u>h</u>elp</a></li>
+                    </ul>
+                </div>
 
-// generate a new tetromino sequence
-// @see https://tetris.fandom.com/wiki/Random_Generator
-function generateSequence() {
-  const sequence = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
+                <ul class="pause">
+                    <li><a href="#" data-action="endPause"><u>c</u>ontinue</a></li>
+                    <li><a href="#" data-action="finishGame"><u>n</u>ew game</a></li>
+                </ul>
 
-  while (sequence.length) {
-    const rand = getRandomInt(0, sequence.length - 1);
-    const name = sequence.splice(rand, 1)[0];
-    tetrominoSequence.push(name);
-  }
-}
+                <div class="input">
+                    <p>your name:</p>
+                    <input type="text" />
+                    <a href="#" data-action="save"><u>o</u>k</a>
+                    <a class="restart" href="#" data-action="mainScreen"><u>n</u>ew game</a>
+                </div>
 
-// get the next tetromino in the sequence
-function getNextTetromino() {
-  if (tetrominoSequence.length === 0) {
-    generateSequence();
-  }
+                <div class="high">
+                    <div class="scores"></div>
+                    <div class="none">no scores available</div>
+                    <a class="restore" href="#" data-action="restore"><u>r</u>estore</a>
+                    <a class="back" href="#" data-action="mainScreen"><u>b</u>ack</a>
+                </div>
 
-  const name = tetrominoSequence.pop();
-  const matrix = tetrominos[name];
+                <div class="controls">
+                    <div class="left">
+                        <b>Left Arrow</b><br />
+                        <b>Right Arrow</b><br />
+                        <b>Down Arrow</b><br />
+                        <b>X</b> or <b>Up Arrow</b><br />
+                        <b>Z</b><br />
+                        <b>Ctrl</b> or <b>Space</b><br />
+                        <b>P</b><br />
+                        <b>M</b><br />
+                        <b>Enter</b>
+                    </div>
+                    <div class="middle">
+                        - <br /> - <br /> - <br /> - <br /> - <br />
+                        - <br /> - <br /> - <br /> -
+                    </div>
+                    <div class="right">
+                        Move left<br />
+                        Move right<br />
+                        Soft drop<br />
+                        Rotate right<br />
+                        Rotate left<br />
+                        Hard drop<br />
+                        Pause game<br />
+                        Mute/Unmute<br />
+                        Start playing
+                    </div>
+                    <p>Use the links or keys (underline letters) to navigate throught the screens.</p>
+                    <a class="back" href="#" data-action="mainScreen"><u>b</u>ack</a>
+                </div>
+            </div>
+        </div>
 
-  // I and O start centered, all others start in left-middle
-  const col = playfield[0].length / 2 - Math.ceil(matrix[0].length / 2);
+        <div class="rightSide">
+            <div class="next">
+                <div class="content">
+                    <div id="next"></div>
+                </div>
+                <div class="title">next</div>
+            </div>
+            <div class="level">
+                <div class="content">1</div>
+                <div class="title">level</div>
+            </div>
+            <div class="score">
+                <div class="content">0</div>
+                <div class="title">score</div>
+            </div>
+            <div class="lines">
+                <div class="content">0</div>
+                <div class="title">lines</div>
+            </div>
 
-  // I starts on row 21 (-1), all others start on row 22 (-2)
-  const row = name === 'I' ? -1 : -2;
+            <div class="audio" data-action="sound">
+                <div class="waves">
+                    <div></div><div></div>
+                    <div></div><div></div>
+                </div>
+                <div class="triangle"></div>
+                <div class="box"></div>
+            </div>
+            <a class="pauser" href="#" data-action="pause"><u>p</u>ause</a>
+        </div>
+    </div>
 
-  return {
-    name: name,      // name of the piece (L, O, etc.)
-    matrix: matrix,  // the current rotation matrix
-    row: row,        // current row (starts offscreen)
-    col: col         // current col
-  };
-}
 
-// rotate an NxN matrix 90deg
-// @see https://codereview.stackexchange.com/a/186834
-function rotate(matrix) {
-  const N = matrix.length - 1;
-  const result = matrix.map((row, i) =>
-    row.map((val, j) => matrix[N - j][i])
-  );
+    <div class="tetriminos">
+        <div id="i">
+            <div class="r1"    data-top="0" data-left="2"></div>
+            <div class="r3"    data-top="0" data-left="1"></div>
 
-  return result;
-}
+            <div class="r0"    data-top="1" data-left="0"></div>
+            <div class="r0 r3" data-top="1" data-left="1"></div>
+            <div class="r0 r1" data-top="1" data-left="2"></div>
+            <div class="r0"    data-top="1" data-left="3"></div>
 
-// check to see if the new matrix/row/col is valid
-function isValidMove(matrix, cellRow, cellCol) {
-  for (let row = 0; row < matrix.length; row++) {
-    for (let col = 0; col < matrix[row].length; col++) {
-      if (matrix[row][col] && (
-          // outside the game bounds
-          cellCol + col < 0 ||
-          cellCol + col >= playfield[0].length ||
-          cellRow + row >= playfield.length ||
-          // collides with another piece
-          playfield[cellRow + row][cellCol + col])
-        ) {
-        return false;
-      }
-    }
-  }
+            <div class="r2"    data-top="2" data-left="0"></div>
+            <div class="r2 r3" data-top="2" data-left="1"></div>
+            <div class="r1 r2" data-top="2" data-left="2"></div>
+            <div class="r2"    data-top="2" data-left="3"></div>
 
-  return true;
-}
+            <div class="r1"    data-top="3" data-left="2"></div>
+            <div class="r3"    data-top="3" data-left="1"></div>
+        </div>
 
-// place the tetromino on the playfield
-function placeTetromino() {
-  for (let row = 0; row < tetromino.matrix.length; row++) {
-    for (let col = 0; col < tetromino.matrix[row].length; col++) {
-      if (tetromino.matrix[row][col]) {
+        <div id="j">
+            <div class="r0"    data-top="0" data-left="0"></div>
+            <div class="r1 r3" data-top="0" data-left="1"></div>
+            <div class="r1"    data-top="0" data-left="2"></div>
 
-        // game over if piece has any part offscreen
-        if (tetromino.row + row < 0) {
-          return showGameOver();
+            <div class="r0 r2" data-top="1" data-left="0"></div>
+            <div class="r0 r1 r2 r3" data-top="1" data-left="1"></div>
+            <div class="r0 r2" data-top="1" data-left="2"></div>
+
+            <div class="r3"    data-top="2" data-left="0"></div>
+            <div class="r1 r3" data-top="2" data-left="1"></div>
+            <div class="r2"    data-top="2" data-left="2"></div>
+        </div>
+
+        <div id="l">
+            <div class="r3"    data-top="0" data-left="0"></div>
+            <div class="r1 r3" data-top="0" data-left="1"></div>
+            <div class="r0"    data-top="0" data-left="2"></div>
+
+            <div class="r0 r2" data-top="1" data-left="0"></div>
+            <div class="r0 r1 r2 r3" data-top="1" data-left="1"></div>
+            <div class="r0 r2" data-top="1" data-left="2"></div>
+
+            <div class="r2"    data-top="2" data-left="0"></div>
+            <div class="r1 r3" data-top="2" data-left="1"></div>
+            <div class="r1"    data-top="2" data-left="2"></div>
+        </div>
+
+        <div id="o">
+            <div class="r0 r1 r2 r3" data-top="0" data-left="1"></div>
+            <div class="r0 r1 r2 r3" data-top="0" data-left="2"></div>
+
+            <div class="r0 r1 r2 r3" data-top="1" data-left="1"></div>
+            <div class="r0 r1 r2 r3" data-top="1" data-left="2"></div>
+        </div>
+
+        <div id="s">
+            <div class="r3"    data-top="0" data-left="0"></div>
+            <div class="r0 r1" data-top="0" data-left="1"></div>
+            <div class="r0"    data-top="0" data-left="2"></div>
+
+            <div class="r0 r3" data-top="1" data-left="0"></div>
+            <div class="r0 r1 r2 r3" data-top="1" data-left="1"></div>
+            <div class="r1 r2" data-top="1" data-left="2"></div>
+
+            <div class="r2"    data-top="2" data-left="0"></div>
+            <div class="r2 r3" data-top="2" data-left="1"></div>
+            <div class="r1"    data-top="2" data-left="2"></div>
+        </div>
+
+        <div id="t">
+            <div class="r0 r1 r3"    data-top="0" data-left="1"></div>
+
+            <div class="r0 r2 r3"    data-top="1" data-left="0"></div>
+            <div class="r0 r1 r2 r3" data-top="1" data-left="1"></div>
+            <div class="r0 r1 r2"    data-top="1" data-left="2"></div>
+
+            <div class="r1 r2 r3"    data-top="2" data-left="1"></div>
+        </div>
+
+        <div id="z">
+            <div class="r0"    data-top="0" data-left="0"></div>
+            <div class="r0 r3" data-top="0" data-left="1"></div>
+            <div class="r1"    data-top="0" data-left="2"></div>
+
+            <div class="r2 r3" data-top="1" data-left="0"></div>
+            <div class="r0 r1 r2 r3" data-top="1" data-left="1"></div>
+            <div class="r0 r1" data-top="1" data-left="2"></div>
+
+            <div class="r3"    data-top="2" data-left="0"></div>
+            <div class="r1 r2" data-top="2" data-left="1"></div>
+            <div class="r2"    data-top="2" data-left="2"></div>
+        </div>
+    </div>
+    <script>
+window.addEventListener("keydown",
+    function(e){
+        keys[e.code] = true;
+        switch(e.code){
+            case "ArrowUp": case "ArrowDown": case "ArrowLeft": case "ArrowRight":
+            case "Space": e.preventDefault(); break;
+            default: break; // do not block other keys
         }
-
-        playfield[tetromino.row + row][tetromino.col + col] = tetromino.name;
-      }
-    }
-  }
-
-  // check for line clears starting from the bottom and working our way up
-  for (let row = playfield.length - 1; row >= 0; ) {
-    if (playfield[row].every(cell => !!cell)) {
-
-      // drop every row above this one
-      for (let r = row; r >= 0; r--) {
-        for (let c = 0; c < playfield[r].length; c++) {
-          playfield[r][c] = playfield[r-1][c];
-        }
-      }
-    }
-    else {
-      row--;
-    }
-  }
-
-  tetromino = getNextTetromino();
-}
-
-// show the game over screen
-function showGameOver() {
-  cancelAnimationFrame(rAF);
-  gameOver = true;
-
-  context.fillStyle = 'black';
-  context.globalAlpha = 0.75;
-  context.fillRect(0, canvas.height / 2 - 30, canvas.width, 60);
-
-  context.globalAlpha = 1;
-  context.fillStyle = 'white';
-  context.font = '36px monospace';
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  context.fillText('GAME OVER!', canvas.width / 2, canvas.height / 2);
-}
-
-const canvas = document.getElementById('game');
-const context = canvas.getContext('2d');
-const grid = 32;
-const tetrominoSequence = [];
-
-// keep track of what is in every cell of the game using a 2d array
-// tetris playfield is 10x20, with a few rows offscreen
-const playfield = [];
-
-// populate the empty state
-for (let row = -2; row < 20; row++) {
-  playfield[row] = [];
-
-  for (let col = 0; col < 10; col++) {
-    playfield[row][col] = 0;
-  }
-}
-
-// how to draw each tetromino
-// @see https://tetris.fandom.com/wiki/SRS
-const tetrominos = {
-  'I': [
-    [0,0,0,0],
-    [1,1,1,1],
-    [0,0,0,0],
-    [0,0,0,0]
-  ],
-  'J': [
-    [1,0,0],
-    [1,1,1],
-    [0,0,0],
-  ],
-  'L': [
-    [0,0,1],
-    [1,1,1],
-    [0,0,0],
-  ],
-  'O': [
-    [1,1],
-    [1,1],
-  ],
-  'S': [
-    [0,1,1],
-    [1,1,0],
-    [0,0,0],
-  ],
-  'Z': [
-    [1,1,0],
-    [0,1,1],
-    [0,0,0],
-  ],
-  'T': [
-    [0,1,0],
-    [1,1,1],
-    [0,0,0],
-  ]
-};
-
-// color of each tetromino
-const colors = {
-  'I': 'cyan',
-  'O': 'yellow',
-  'T': 'purple',
-  'S': 'green',
-  'Z': 'red',
-  'J': 'blue',
-  'L': 'orange'
-};
-
-let count = 0;
-let tetromino = getNextTetromino();
-let rAF = null;  // keep track of the animation frame so we can cancel it
-let gameOver = false;
-
-// game loop
-function loop() {
-  rAF = requestAnimationFrame(loop);
-  context.clearRect(0,0,canvas.width,canvas.height);
-
-  // draw the playfield
-  for (let row = 0; row < 20; row++) {
-    for (let col = 0; col < 10; col++) {
-      if (playfield[row][col]) {
-        const name = playfield[row][col];
-        context.fillStyle = colors[name];
-
-        // drawing 1 px smaller than the grid creates a grid effect
-        context.fillRect(col * grid, row * grid, grid-1, grid-1);
-      }
-    }
-  }
-
-  // draw the active tetromino
-  if (tetromino) {
-
-    // tetromino falls every 35 frames
-    if (++count > 35) {
-      tetromino.row++;
-      count = 0;
-
-      // place piece if it runs into anything
-      if (!isValidMove(tetromino.matrix, tetromino.row, tetromino.col)) {
-        tetromino.row--;
-        placeTetromino();
-      }
-    }
-
-    context.fillStyle = colors[tetromino.name];
-
-    for (let row = 0; row < tetromino.matrix.length; row++) {
-      for (let col = 0; col < tetromino.matrix[row].length; col++) {
-        if (tetromino.matrix[row][col]) {
-
-          // drawing 1 px smaller than the grid creates a grid effect
-          context.fillRect((tetromino.col + col) * grid, (tetromino.row + row) * grid, grid-1, grid-1);
-        }
-      }
-    }
-  }
-}
-
-// listen to keyboard events to move the active tetromino
-document.addEventListener('keydown', function(e) {
-  if (gameOver) return;
-
-  // left and right arrow keys (move)
-  if (e.which === 37 || e.which === 39) {
-    const col = e.which === 37
-      ? tetromino.col - 1
-      : tetromino.col + 1;
-
-    if (isValidMove(tetromino.matrix, tetromino.row, col)) {
-      tetromino.col = col;
-    }
-  }
-
-  // up arrow key (rotate)
-  if (e.which === 38) {
-    const matrix = rotate(tetromino.matrix);
-    if (isValidMove(matrix, tetromino.row, tetromino.col)) {
-      tetromino.matrix = matrix;
-    }
-  }
-
-  // down arrow key (drop)
-  if(e.which === 40) {
-    const row = tetromino.row + 1;
-
-    if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
-      tetromino.row = row - 1;
-
-      placeTetromino();
-      return;
-    }
-
-    tetromino.row = row;
-  }
-});
-
-// start the game
-rAF = requestAnimationFrame(loop);
-</script>
+    },
+false);
+window.addEventListener('keyup',
+    function(e){
+        keys[e.code] = false;
+    },
+false);
+    </script>
 </body>
 </html>

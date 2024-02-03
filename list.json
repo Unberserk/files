@@ -296,6 +296,10 @@
     "game": "P.Craft"
   },
   {
+    "gameroot": "PicoWorldRace/",
+    "game": "Pice World Race"
+  },
+  {
     "gameroot": "PlantsVsZombies/",
     "game": "Plants Vs Zombies"
   },

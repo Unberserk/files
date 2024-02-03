@@ -64,6 +64,10 @@
     "game": "Cookie Clicker"
   },
   {
+    "gameroot": "DarkSword/",
+    "game": "Dark Sword"
+  },
+  {
     "gameroot": "Dodge/",
     "game": "Dodge"
   },

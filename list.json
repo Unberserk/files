@@ -8,6 +8,10 @@
     "game": "2048"
   },
   {
+    "gameroot": "BasesLoaded/",
+    "game": "Bases Loaded"
+  },
+  {
     "gameroot": "BasketRandom/",
     "game": "Basket Random"
   },
@@ -38,6 +42,10 @@
   {
     "gameroot": "DriveMad/",
     "game": "Drive Mad"
+  },
+  {
+    "gameroot": "Eddynardo/",
+    "game": "Eddynardo Games"
   },
   {
     "gameroot": "FridayNightFunkin/",

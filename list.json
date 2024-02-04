@@ -68,6 +68,10 @@
     "game": "Learn To Fly 2"
   },
   {
+    "gameroot": "MikuTap/",
+    "game": "MikuTap"
+  },
+  {
     "gameroot": "Minecraft15/",
     "game": "Minecraft 1.5"
   },
